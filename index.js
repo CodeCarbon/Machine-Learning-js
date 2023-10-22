@@ -79,10 +79,8 @@ var game_hash = "100af1b49f5e9f87efc81f838bf9b1f5e38293e5b4cf6d0b366c004e0a8d998
 
 var results = [];
 var X = [];
-let count = 0;
-for (let i = 1; i<=100; i ++){
-    count += 1;
-    X.push(count)
+for (let i = 0; i<=100; i ++){
+    X.push(i)
     results.push(get_result(game_hash));
     game_hash = get_prev_game(game_hash);
 }
