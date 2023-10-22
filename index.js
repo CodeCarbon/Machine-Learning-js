@@ -51,9 +51,41 @@ class DataSet {
     }
 }
 
-const  predication = new DataSet(
-    [1,2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,25,26,27,28,29,30],
-    [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,290,300]
 
-)
-console.log("Predication[x=100]:",predication.LinearRegression({x: 100}),"\nConfident[x=100]",predication.linear_confidence({x: 100}));
+
+//predication
+
+const crypto = require('node:crypto');
+const e = 2 ** 52;
+const salt = '0000000000000000000fa3b65e43e4240d71762a5bf397d5304b2596d116859c';
+
+function get_result(game_hash) {
+    let hm = crypto.createHmac('sha256', game_hash);
+    hm.update(salt);
+    let h = hm.digest('hex');
+    if (parseInt(h, 16) % 33 === 0) {
+        return 1;
+    }
+    h = parseInt(h.slice(0, 13), 16);
+    let e = 2 ** 52;
+    return Math.ceil((((100 * e - h) / (e - h)))) / 100.0;
+}
+
+function get_prev_game(hash_code) {
+    return crypto.createHash('sha256').update(hash_code).digest('hex');
+}
+
+var game_hash = "100af1b49f5e9f87efc81f838bf9b1f5e38293e5b4cf6d0b366c004e0a8d9987"; // Update to latest game's hash for more results
+
+var results = [];
+var X = [];
+let count = 0;
+for (let i = 1; i<=100; i ++){
+    count += 1;
+    X.push(count)
+    results.push(get_result(game_hash));
+    game_hash = get_prev_game(game_hash);
+}
+const data = new DataSet(X, results)
+console.log("Predication :", data.LinearRegression({x: 2}),"Confident :", data.linear_confidence({x: 1}))
+console.log("Actual :", results[2])
